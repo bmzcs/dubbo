@@ -62,6 +62,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
     }
 
     public Object getObject() throws Exception {
+        //获取远程服务
         return get();
     }
 

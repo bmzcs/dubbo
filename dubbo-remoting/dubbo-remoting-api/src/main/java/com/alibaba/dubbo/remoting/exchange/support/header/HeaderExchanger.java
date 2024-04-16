@@ -35,10 +35,12 @@ public class HeaderExchanger implements Exchanger {
     public static final String NAME = "header";
 
     public ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException {
+        //创建Client并连接Server，默认使用netty实现
         return new HeaderExchangeClient(Transporters.connect(url, new DecodeHandler(new HeaderExchangeHandler(handler))), true);
     }
 
     public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+        //创建Server并绑定，默认使用netty实现
         return new HeaderExchangeServer(Transporters.bind(url, new DecodeHandler(new HeaderExchangeHandler(handler))));
     }
 
