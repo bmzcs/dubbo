@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * ProtocolConfig
+ * ProtocolConfig，协议配置
  *
  * @export
  */
@@ -42,31 +42,31 @@ public class ProtocolConfig extends AbstractConfig {
 
     private static final long serialVersionUID = 6913423882496634749L;
 
-    // protocol name
+    // protocol name，协议名
     private String name;
 
-    // service IP address (when there are multiple network cards available)
+    // service IP address (when there are multiple network cards available)，服务ip
     private String host;
 
-    // service port
+    // service port,端口
     private Integer port;
 
-    // context path
+    // context path，上下文
     private String contextpath;
 
-    // thread pool
+    // thread pool，线程池
     private String threadpool;
 
-    // thread pool size (fixed size)
+    // thread pool size (fixed size)，线程池大小
     private Integer threads;
 
-    // IO thread pool size (fixed size)
+    // IO thread pool size (fixed size)io线程数量
     private Integer iothreads;
 
-    // thread pool's queue length
+    // thread pool's queue length，线程等待队列大小
     private Integer queues;
 
-    // max acceptable connections
+    // max acceptable connections，最大连接数
     private Integer accepts;
 
     // protocol codec

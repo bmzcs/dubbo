@@ -35,16 +35,16 @@ public class ApplicationConfig extends AbstractConfig {
 
     private static final long serialVersionUID = 5508512956753757169L;
 
-    // application name
+    // application name，应用名
     private String name;
 
-    // module version
+    // module version，应用版本
     private String version;
 
-    // application owner
+    // application owner，所有者
     private String owner;
 
-    // application's organization (BU)
+    // application's organization (BU)，所属组织
     private String organization;
 
     // architecture layer
@@ -59,16 +59,16 @@ public class ApplicationConfig extends AbstractConfig {
     // logger
     private String logger;
 
-    // registry centers
+    // registry centers，注册中心配置
     private List<RegistryConfig> registries;
 
-    // monitor center
+    // monitor center，监控配置
     private MonitorConfig monitor;
 
-    // is default or not
+    // is default or not，是否默认配置
     private Boolean isDefault;
 
-    // directory for saving thread dump
+    // directory for saving thread dump，dump路径
     private String dumpDirectory;
 
     private Boolean qosEnable;
@@ -77,7 +77,7 @@ public class ApplicationConfig extends AbstractConfig {
 
     private Boolean qosAcceptForeignIp;
 
-    // customized parameters
+    // customized parameters，定制的参数信息
     private Map<String, String> parameters;
 
     public ApplicationConfig() {

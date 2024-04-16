@@ -63,13 +63,21 @@ public abstract class AbstractConfig implements Serializable {
     private static final String[] SUFFIXES = new String[]{"Config", "Bean"};
 
     static {
+        //协议类型
         legacyProperties.put("dubbo.protocol.name", "dubbo.service.protocol");
+        //服务器地址
         legacyProperties.put("dubbo.protocol.host", "dubbo.service.server.host");
+        //端口
         legacyProperties.put("dubbo.protocol.port", "dubbo.service.server.port");
+        //最大线程数
         legacyProperties.put("dubbo.protocol.threads", "dubbo.service.max.thread.pool.size");
+        //超时时间
         legacyProperties.put("dubbo.consumer.timeout", "dubbo.service.invoke.timeout");
+        //重试次数
         legacyProperties.put("dubbo.consumer.retries", "dubbo.service.max.retry.providers");
+        //consumer检查
         legacyProperties.put("dubbo.consumer.check", "dubbo.service.allow.no.provider");
+        //服务url
         legacyProperties.put("dubbo.service.url", "dubbo.service.address");
     }
 
@@ -194,18 +202,22 @@ public abstract class AbstractConfig implements Serializable {
                         && Modifier.isPublic(method.getModifiers())
                         && method.getParameterTypes().length == 0
                         && isPrimitive(method.getReturnType())) {
+                    //参数配置注解
                     Parameter parameter = method.getAnnotation(Parameter.class);
                     if (method.getReturnType() == Object.class || parameter != null && parameter.excluded()) {
                         continue;
                     }
                     int i = name.startsWith("get") ? 3 : 2;
+                    //字段名
                     String prop = StringUtils.camelToSplitName(name.substring(i, i + 1).toLowerCase() + name.substring(i + 1), ".");
                     String key;
                     if (parameter != null && parameter.key() != null && parameter.key().length() > 0) {
+                        //别名
                         key = parameter.key();
                     } else {
                         key = prop;
                     }
+                    //值
                     Object value = method.invoke(config, new Object[0]);
                     String str = String.valueOf(value).trim();
                     if (value != null && str.length() > 0) {
@@ -225,6 +237,7 @@ public abstract class AbstractConfig implements Serializable {
                         if (prefix != null && prefix.length() > 0) {
                             key = prefix + "." + key;
                         }
+                        //添加配置信息的parameters
                         parameters.put(key, str);
                     } else if (parameter != null && parameter.required()) {
                         throw new IllegalStateException(config.getClass().getSimpleName() + "." + key + " == null");
@@ -289,6 +302,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     private static boolean isPrimitive(Class<?> type) {
+        //是否是基本类型
         return type.isPrimitive()
                 || type == String.class
                 || type == Character.class

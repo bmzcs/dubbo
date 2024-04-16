@@ -68,25 +68,44 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see java.net.URL
  * @see java.net.URI
  */
+//dubbo URL对象
 public final class URL implements Serializable {
 
     private static final long serialVersionUID = -1985165475234910535L;
 
+    //协议名
     private final String protocol;
 
+    //用户名
     private final String username;
 
+    //密码
     private final String password;
 
     // by default, host to registry
+    //地址
     private final String host;
 
     // by default, port to registry
+    //端口
     private final int port;
 
+    //服务路径
     private final String path;
 
+    //参数集合
     private final Map<String, String> parameters;
+
+    /**
+     * 根据以上字段，最终生成服务url：
+     * protocol://username:password@host:port/path?key=value&key=value
+     * 如：
+     */
+
+
+    //dubbo://192.168.3.17:20880/com.alibaba.dubbo.demo.DemoService?
+    // anyhost=true&application=demo-provider&default.delay=-1&default.retries=0&default.service.filter=demoFilter
+    // &delay=-1&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&methods=sayHello&pid=19031&side=provider&timestamp=1519651641799
 
     // ==== cache ====
 

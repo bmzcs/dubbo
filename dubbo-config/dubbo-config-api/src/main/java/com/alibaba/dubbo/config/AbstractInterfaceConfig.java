@@ -103,13 +103,16 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     private String scope;
 
     protected void checkRegistry() {
+        //校验注册中心，并添加注册中心配置
         // for backward compatibility
         if (registries == null || registries.isEmpty()) {
+            //注册中心为空，获取注册中心地址配置
             String address = ConfigUtils.getProperty("dubbo.registry.address");
             if (address != null && address.length() > 0) {
                 registries = new ArrayList<RegistryConfig>();
                 String[] as = address.split("\\s*[|]+\\s*");
                 for (String a : as) {
+                    //添加注册中心
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setAddress(a);
                     registries.add(registryConfig);
@@ -126,6 +129,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                     + ", Please add <dubbo:registry address=\"...\" /> to your spring config. If you want unregister, please set <dubbo:service registry=\"N/A\" />");
         }
         for (RegistryConfig registryConfig : registries) {
+            //为注册中心添加配置
             appendProperties(registryConfig);
         }
     }
@@ -133,6 +137,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     @SuppressWarnings("deprecation")
     protected void checkApplication() {
         // for backward compatibility
+        //应用配置信息
         if (application == null) {
             String applicationName = ConfigUtils.getProperty("dubbo.application.name");
             if (applicationName != null && applicationName.length() > 0) {
@@ -157,42 +162,59 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     }
 
     protected List<URL> loadRegistries(boolean provider) {
+        //加载注册中心配置
         checkRegistry();
         List<URL> registryList = new ArrayList<URL>();
+        //注册中心不为空
         if (registries != null && !registries.isEmpty()) {
             for (RegistryConfig config : registries) {
+                //获取配置
                 String address = config.getAddress();
                 if (address == null || address.length() == 0) {
                     address = Constants.ANYHOST_VALUE;
                 }
+                //获取系统注册中心地址
                 String sysaddress = System.getProperty("dubbo.registry.address");
                 if (sysaddress != null && sysaddress.length() > 0) {
                     address = sysaddress;
                 }
                 if (address != null && address.length() > 0
                         && !RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
+                    //注册地址不为空且不是N/A
                     Map<String, String> map = new HashMap<String, String>();
+                    //添加应用参数
                     appendParameters(map, application);
+                    //添加注册中心参数
                     appendParameters(map, config);
+                    //注册中心服务类的全限定名
                     map.put("path", RegistryService.class.getName());
+                    //dubbo版本
                     map.put("dubbo", Version.getVersion());
+                    //注册的时间戳
                     map.put(Constants.TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()));
                     if (ConfigUtils.getPid() > 0) {
+                        //当前进程的pid
                         map.put(Constants.PID_KEY, String.valueOf(ConfigUtils.getPid()));
                     }
                     if (!map.containsKey("protocol")) {
                         if (ExtensionLoader.getExtensionLoader(RegistryFactory.class).hasExtension("remote")) {
                             map.put("protocol", "remote");
                         } else {
+                            //协议类型
                             map.put("protocol", "dubbo");
                         }
                     }
+                    //解析dubbo的url
                     List<URL> urls = UrlUtils.parseURLs(address, map);
                     for (URL url : urls) {
+                        //registry://224.5.6.7:1234/com.alibaba.dubbo.registry.RegistryService
+                        // ?application=demo-provider&dubbo=2.0.0&pid=25912&qos.port=22222&registry=multicast&timestamp=1713236674308
+                        //添加url的协议
                         url = url.addParameter(Constants.REGISTRY_KEY, url.getProtocol());
                         url = url.setProtocol(Constants.REGISTRY_PROTOCOL);
                         if ((provider && url.getParameter(Constants.REGISTER_KEY, true))
                                 || (!provider && url.getParameter(Constants.SUBSCRIBE_KEY, true))) {
+                            //添加到注册list
                             registryList.add(url);
                         }
                     }
@@ -249,14 +271,16 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
 
     protected void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) {
         // interface cannot be null
+        //校验接口和方法
         if (interfaceClass == null) {
             throw new IllegalStateException("interface not allow null!");
         }
         // to verify interfaceClass is an interface
+        //必须是接口
         if (!interfaceClass.isInterface()) {
             throw new IllegalStateException("The interface class " + interfaceClass + " is not a interface!");
         }
-        // check if methods exist in the interface
+        // check if methods exist in the interface，方法在接口中是否存在
         if (methods != null && !methods.isEmpty()) {
             for (MethodConfig methodBean : methods) {
                 String methodName = methodBean.getName();
@@ -279,6 +303,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     }
 
     protected void checkStubAndMock(Class<?> interfaceClass) {
+        //本地测试桩校验
         if (ConfigUtils.isNotEmpty(local)) {
             Class<?> localClass = ConfigUtils.isDefault(local) ? ReflectUtils.forName(interfaceClass.getName() + "Local") : ReflectUtils.forName(local);
             if (!interfaceClass.isAssignableFrom(localClass)) {
