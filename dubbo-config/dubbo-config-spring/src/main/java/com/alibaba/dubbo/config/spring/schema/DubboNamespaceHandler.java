@@ -34,6 +34,7 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
+        //初始化namespace
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));
         registerBeanDefinitionParser("registry", new DubboBeanDefinitionParser(RegistryConfig.class, true));
