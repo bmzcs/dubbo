@@ -49,7 +49,7 @@ public @interface EnableDubbo {
      * Base packages to scan for annotated @Service classes.
      * <p>
      * Use {@link #scanBasePackageClasses()} for a type-safe alternative to String-based
-     * package names.
+     * package names.注解扫描的包号，多个用,分隔开
      *
      * @return the base packages to scan
      * @see DubboComponentScan#basePackages()
@@ -61,7 +61,7 @@ public @interface EnableDubbo {
      * Type-safe alternative to {@link #scanBasePackages()} for specifying the packages to
      * scan for annotated @Service classes. The package of each class specified will be
      * scanned.
-     *
+     * 扫描的基类
      * @return classes from the base packages to scan
      * @see DubboComponentScan#basePackageClasses
      */
@@ -71,7 +71,7 @@ public @interface EnableDubbo {
 
     /**
      * It indicates whether {@link AbstractConfig} binding to multiple Spring Beans.
-     *
+     * 是否可以支持绑定到多个bean上
      * @return the default value is <code>false</code>
      * @see EnableDubboConfig#multiple()
      */

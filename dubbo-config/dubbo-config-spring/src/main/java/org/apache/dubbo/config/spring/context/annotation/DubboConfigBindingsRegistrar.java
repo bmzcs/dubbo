@@ -41,16 +41,19 @@ public class DubboConfigBindingsRegistrar implements ImportBeanDefinitionRegistr
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
+        //获取注解
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(
                 importingClassMetadata.getAnnotationAttributes(EnableDubboConfigBindings.class.getName()));
 
+        //得到注解值
         AnnotationAttributes[] annotationAttributes = attributes.getAnnotationArray("value");
 
+        //创建ConfigBindingRegustray对象并设置环境，
         DubboConfigBindingRegistrar registrar = new DubboConfigBindingRegistrar();
         registrar.setEnvironment(environment);
 
         for (AnnotationAttributes element : annotationAttributes) {
-
+            //遍历数组，逐个注册对应的bean
             registrar.registerBeanDefinitions(element, registry);
 
         }

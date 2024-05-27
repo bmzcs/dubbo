@@ -54,7 +54,7 @@ public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, A
     private final Log log = LogFactory.getLog(getClass());
 
     /**
-     * The prefix of Configuration Properties
+     * The prefix of Configuration Properties，配置属性前缀
      */
     private final String prefix;
 

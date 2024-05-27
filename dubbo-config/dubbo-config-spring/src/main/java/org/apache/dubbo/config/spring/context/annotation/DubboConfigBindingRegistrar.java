@@ -64,20 +64,23 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
+        //获取注解值
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(
                 importingClassMetadata.getAnnotationAttributes(EnableDubboConfigBinding.class.getName()));
 
+        //注册beanDefinitions
         registerBeanDefinitions(attributes, registry);
 
     }
 
     protected void registerBeanDefinitions(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-
+        //前缀
         String prefix = environment.resolvePlaceholders(attributes.getString("prefix"));
 
+        //配置类型
         Class<? extends AbstractConfig> configClass = attributes.getClass("type");
 
+        //是否multiple
         boolean multiple = attributes.getBoolean("multiple");
 
         registerDubboConfigBeans(prefix, configClass, multiple, registry);
@@ -88,7 +91,8 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
                                           Class<? extends AbstractConfig> configClass,
                                           boolean multiple,
                                           BeanDefinitionRegistry registry) {
-
+        //注册bean
+        //获取配置
         Map<String, Object> properties = getSubProperties(environment.getPropertySources(), prefix);
 
         if (CollectionUtils.isEmpty(properties)) {
@@ -98,14 +102,14 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
             }
             return;
         }
-
+        //如果不是multiple，解析单个beanName，是multiple，解析多个beanName
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(properties) :
                 Collections.singleton(resolveSingleBeanName(properties, configClass, registry));
 
         for (String beanName : beanNames) {
-
+            //遍历beanName,注册configBean
             registerDubboConfigBean(beanName, configClass, registry);
-
+            //将配置注入多个config中
             registerDubboConfigBindingBeanPostProcessor(prefix, beanName, multiple, registry);
 
         }
@@ -116,11 +120,11 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
 
     private void registerDubboConfigBean(String beanName, Class<? extends AbstractConfig> configClass,
                                          BeanDefinitionRegistry registry) {
-
+        //获取BeanDefinitionBuilder
         BeanDefinitionBuilder builder = rootBeanDefinition(configClass);
-
+        //h获取beanDefinition
         AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
-
+        //注册bean
         registry.registerBeanDefinition(beanName, beanDefinition);
 
         if (log.isInfoEnabled()) {
@@ -133,18 +137,22 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
     private void registerDubboConfigBindingBeanPostProcessor(String prefix, String beanName, boolean multiple,
                                                              BeanDefinitionRegistry registry) {
 
+        // 创建 BeanDefinitionBuilder 对象
         Class<?> processorClass = DubboConfigBindingBeanPostProcessor.class;
 
         BeanDefinitionBuilder builder = rootBeanDefinition(processorClass);
 
+        //获取实际的前缀
         String actualPrefix = multiple ? normalizePrefix(prefix) + beanName : prefix;
 
+        //添加构造方法参数
         builder.addConstructorArgValue(actualPrefix).addConstructorArgValue(beanName);
 
+        // 获得 AbstractBeanDefinition 对象
         AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
 
         beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-
+        // 注册到 registry 中
         registerWithGeneratedName(beanDefinition, registry);
 
         if (log.isInfoEnabled()) {
